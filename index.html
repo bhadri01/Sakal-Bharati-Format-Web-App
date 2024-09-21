@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sakal Bharati Format Web App</title>
+    <style>
+      /* Global Styles */
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f0f0f0;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+
+      /* Main Container */
+      .container {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 600px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        margin: 10px;
+      }
+
+      h1 {
+        text-align: center;
+        font-size: 1.8rem;
+        color: #333;
+      }
+
+      /* Text Area Styles */
+      .text-area {
+        width: calc(100% - 20px);
+        padding: 12px;
+        resize: none;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        font-size: 1rem;
+        outline: none;
+      }
+
+      /* Button Styles */
+      button {
+        padding: 10px 16px;
+        font-size: 1rem;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: 0.3s ease;
+      }
+
+      button:hover {
+        opacity: 0.9;
+        transform: scale(1.05);
+      }
+
+      .action-btn {
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+      }
+
+      /* Individual Button Colors */
+      #replace-button {
+        background-color: #007bff;
+        color: white;
+      }
+
+      #clear-button {
+        background-color: #6c757d;
+        color: white;
+      }
+
+      #copy-button {
+        background-color: gray;
+        color: white;
+        margin-top: 10px;
+      }
+
+      /* Voice Action Buttons */
+      .voice-action {
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+        margin-top: 16px;
+      }
+
+      #start-voice-button {
+        background-color: #28a745;
+        color: white;
+      }
+
+      #stop-voice-button {
+        background-color: #dc3545;
+        color: white;
+      }
+
+      #start-voice-button:disabled,
+      #stop-voice-button:disabled {
+        background-color: rgba(0, 0, 0, 0.3);
+        cursor: not-allowed;
+      }
+
+      /* Media Queries for Mobile */
+      @media (max-width: 768px) {
+        h1 {
+          font-size: 1.5rem;
+        }
+
+        button {
+          font-size: 0.9rem;
+        }
+
+        .container {
+          width: 95%;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <h1>Sakal Bharati Format Web App</h1>
+
+      <!-- Input Text Area -->
+      <textarea
+        id="input-text"
+        class="text-area"
+        rows="8"
+        placeholder="Paste Text Here"
+      ></textarea>
+
+      <!-- Action Buttons -->
+      <div class="action-btn">
+        <button id="replace-button" onclick="formatText()">Convert Text</button>
+        <button id="clear-button" onclick="clearText()">Clear Text</button>
+      </div>
+
+      <!-- Output Text Area -->
+      <textarea
+        id="output-text"
+        class="text-area"
+        rows="8"
+        placeholder="Formatted text will appear here"
+      ></textarea>
+
+      <!-- Copy Button -->
+      <button id="copy-button" onclick="copyText()">Copy Text</button>
+
+      <!-- Language Selection -->
+      <div>
+        <label for="language-select">Select voice language:</label>
+        <select id="language-select">
+          <option value="en-US">English (US)</option>
+          <option value="ta-IN">Tamil (India)</option>
+          <option value="te-IN">Telugu (India)</option>
+          <option value="kn-IN">Kannada (India)</option>
+          <option value="ml-IN">Malayalam (India)</option>
+          <option value="hi-IN">Hindi (India)</option>
+          <!-- Add more language options as needed -->
+        </select>
+      </div>
+
+      <!-- Voice Action Buttons -->
+      <div class="voice-action">
+        <button id="start-voice-button" onclick="startVoiceRecognition()">
+          Start Voice
+        </button>
+        <button
+          id="stop-voice-button"
+          onclick="stopVoiceRecognition()"
+          disabled
+        >
+          Stop Voice
+        </button>
+      </div>
+    </div>
+
+    <script>
+      let recognition;
+      let recognizedText = "";
+
+      if ("webkitSpeechRecognition" in window) {
+        recognition = new webkitSpeechRecognition();
+      } else if ("SpeechRecognition" in window) {
+        recognition = new SpeechRecognition();
+      } else {
+        alert("Speech Recognition API is not supported in this browser.");
+      }
+
+      // Function to format text
+      function formatText() {
+        const inputText = document.getElementById("input-text").value;
+
+        const replacements = [
+          { oldText: "கொ", newText: "கொ" },
+          { oldText: "ஙொ", newText: "ஙொ" },
+          { oldText: "சொ", newText: "சொ" },
+          { oldText: "ஞொ", newText: "ஞொ" },
+          { oldText: "டொ", newText: "டொ" },
+          { oldText: "ணொ", newText: "ணொ" },
+          { oldText: "தொ", newText: "தொ" },
+          { oldText: "நொ", newText: "நொ" },
+          { oldText: "பொ", newText: "பொ" },
+          { oldText: "மொ", newText: "மொ" },
+          { oldText: "யொ", newText: "யொ" },
+          { oldText: "ரொ", newText: "ரொ" },
+          { oldText: "லொ", newText: "லொ" },
+          { oldText: "வொ", newText: "வொ" },
+          { oldText: "ழொ", newText: "ழொ" },
+          { oldText: "ளொ", newText: "ளொ" },
+          { oldText: "றொ", newText: "றொ" },
+          { oldText: "னொ", newText: "னொ" },
+          { oldText: "கோ", newText: "கோ" },
+          { oldText: "ஙோ", newText: "ஙோ" },
+          { oldText: "சோ", newText: "சோ" },
+          { oldText: "ஞோ", newText: "ஞோ" },
+          { oldText: "டோ", newText: "டோ" },
+          { oldText: "ணோ", newText: "ணோ" },
+          { oldText: "தோ", newText: "தோ" },
+          { oldText: "நோ", newText: "நோ" },
+          { oldText: "போ", newText: "போ" },
+          { oldText: "மோ", newText: "மோ" },
+          { oldText: "யோ", newText: "யோ" },
+          { oldText: "ரோ", newText: "ரோ" },
+          { oldText: "லோ", newText: "லோ" },
+          { oldText: "வோ", newText: "வோ" },
+          { oldText: "ழோ", newText: "ழோ" },
+          { oldText: "ளோ", newText: "ளோ" },
+          { oldText: "றோ", newText: "றோ" },
+          { oldText: "னோ", newText: "னோ" },
+          { oldText: "கௌ", newText: "கெள" },
+          { oldText: "ஙௌ", newText: "ஙெள" },
+          { oldText: "சௌ", newText: "செள" },
+          { oldText: "ஞௌ", newText: "ஞெள" },
+          { oldText: "டௌ", newText: "டெள" },
+          { oldText: "ணௌ", newText: "ணெள" },
+          { oldText: "தௌ", newText: "தெள" },
+          { oldText: "நௌ", newText: "நெள" },
+          { oldText: "பௌ", newText: "பெள" },
+          { oldText: "மௌ", newText: "மெள" },
+          { oldText: "யௌ", newText: "யெள" },
+          { oldText: "ரௌ", newText: "ரெள" },
+          { oldText: "லௌ", newText: "லெள" },
+          { oldText: "வௌ", newText: "வெள" },
+          { oldText: "ழௌ", newText: "ழெள" },
+          { oldText: "ளௌ", newText: "ளெள" },
+          { oldText: "றௌ", newText: "றெள" },
+          { oldText: "னௌ", newText: "னெள" },
+        ];
+
+        let formattedText = inputText;
+        for (const replacement of replacements) {
+          formattedText = formattedText.replace(
+            new RegExp(replacement.oldText, "g"),
+            replacement.newText
+          );
+        }
+
+        document.getElementById("output-text").value = formattedText;
+      }
+
+      // Function to clear text
+      function clearText() {
+        document.getElementById("input-text").value = "";
+        document.getElementById("output-text").value = "";
+      }
+
+      // Function to copy text
+      function copyText() {
+        const outputTextarea = document.getElementById("output-text");
+        outputTextarea.select();
+        document.execCommand("copy");
+        alert("Text copied to clipboard!");
+      }
+
+      // Function to start voice recognition
+      function startVoiceRecognition() {
+        const selectedLanguage =
+          document.getElementById("language-select").value;
+        recognition.lang = selectedLanguage;
+        recognition.continuous = true;
+        recognition.interimResults = false;
+
+        recognition.onresult = function (event) {
+          let transcript = event.results[event.resultIndex][0].transcript;
+          recognizedText += transcript + " ";
+          document.getElementById("input-text").value += transcript + " ";
+        };
+
+        recognition.onerror = function (event) {
+          console.error("Speech recognition error:", event.error);
+          alert("Error: " + event.error);
+        };
+
+        recognition.onend = function () {
+          document.getElementById("start-voice-button").disabled = false;
+          document.getElementById("stop-voice-button").disabled = true;
+        };
+
+        recognizedText = ""; // Reset recognized text
+        recognition.start();
+        document.getElementById("start-voice-button").disabled = true;
+        document.getElementById("stop-voice-button").disabled = false;
+      }
+
+      // Function to stop voice recognition
+      function stopVoiceRecognition() {
+        if (recognition) {
+          recognition.stop();
+          document.getElementById("start-voice-button").disabled = false;
+          document.getElementById("stop-voice-button").disabled = true;
+        }
+      }
+    </script>
+  </body>
+</html>
