@@ -46,6 +46,7 @@
         border-radius: 8px;
         font-size: 1rem;
         outline: none;
+        overflow-y: auto;
       }
 
       /* Button Styles */
@@ -166,7 +167,6 @@
           <option value="kn-IN">Kannada (India)</option>
           <option value="ml-IN">Malayalam (India)</option>
           <option value="hi-IN">Hindi (India)</option>
-          <!-- Add more language options as needed -->
         </select>
       </div>
 
@@ -266,7 +266,12 @@
           );
         }
 
-        document.getElementById("output-text").value = formattedText;
+        // Update the output text area
+        const outputTextArea = document.getElementById("output-text");
+        outputTextArea.value = formattedText;
+
+        // Auto-scroll to the bottom of the output text area
+        outputTextArea.scrollTop = outputTextArea.scrollHeight;
       }
 
       // Function to clear text
@@ -294,7 +299,11 @@
         recognition.onresult = function (event) {
           let transcript = event.results[event.resultIndex][0].transcript;
           recognizedText += transcript + " ";
-          document.getElementById("input-text").value += transcript + " ";
+          const inputTextArea = document.getElementById("input-text");
+          inputTextArea.value += transcript + " ";
+
+          // Auto-scroll to the bottom of the input text area
+          inputTextArea.scrollTop = inputTextArea.scrollHeight;
         };
 
         recognition.onerror = function (event) {
